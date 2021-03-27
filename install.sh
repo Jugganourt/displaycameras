@@ -22,7 +22,7 @@ done
 # Put the files in place and set ownership and permissions.
 
 
-if[$1 == "skip"]; then
+if [$1 == "skip"]; then
     skipCommand=true
 fi
 
