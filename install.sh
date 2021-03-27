@@ -90,7 +90,7 @@ if [ "$1" != "upgrade" ]; then
 	# Ask whether there's a custom split desired
 	echo -n "Enter a custom gpu split if desired [gpu memory in MB] or [Enter] to use recommended split"
 
-	if[!skipCommand]; then
+	if [!skipCommand]; then
 		read
 	fi
 
@@ -139,7 +139,7 @@ systemctl enable displaycameras
 
 echo "Installation Successful!"
 
-if[!skipCommand]; then
+if [!skipCommand]; then
 		read -p "See the README.md? [Y/y/N/n]"
 fi
 
