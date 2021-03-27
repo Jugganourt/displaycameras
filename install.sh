@@ -21,6 +21,11 @@ done
 
 # Put the files in place and set ownership and permissions.
 
+
+if[$1 == "skip"]; then
+    skipCommand=true
+fi
+
 if [ -r $DIR/displaycameras ]; then
 	echo "Copying the main script and setting permissions."
 	cp -f $DIR/displaycameras /usr/bin/ && chown root:root /usr/bin/displaycameras && chmod 0755 /usr/bin/displaycameras
@@ -84,7 +89,11 @@ if [ "$1" != "upgrade" ]; then
 	fi
 	# Ask whether there's a custom split desired
 	echo -n "Enter a custom gpu split if desired [gpu memory in MB] or [Enter] to use recommended split"
-	read
+
+	if[!skipCommand]; then
+		read
+	fi
+
 	if [ "$REPLY" != "" ]; then
 		if [ "$REPLY" -ge "64" -a "$REPLY" -le "512" ]; then
 			split="$REPLY"
@@ -129,7 +138,11 @@ systemctl daemon-reload
 systemctl enable displaycameras
 
 echo "Installation Successful!"
-read -p "See the README.md? [Y/y/N/n]"
+
+if[!skipCommand]; then
+		read -p "See the README.md? [Y/y/N/n]"
+fi
+
 if [ "$REPLY" = "Y" -o "$REPLY" = "y" ]; then
 	echo "Use the space bar (or PgDn) to page down, PgUp to page up, q to quit"
 	read -p "Press Enter to begin."
