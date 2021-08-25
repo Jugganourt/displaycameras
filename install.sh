@@ -12,9 +12,9 @@ skipCustomGpuSplitPrompt=false
 while getopts "r:g:" arg; do
   case $arg in
     r)
-		if [ "$OPTARG" = "N" -o "$OPTARG" = "n" ]; then 
+		if [ "$OPTARG" = "N" ] || [ "$OPTARG" = "n" ]; then 
 			skipReadMePrompt=true
-		elif [ "$OPTARG" = "Y" -o "$OPTARG" = "y" ]; then 
+		elif [ "$OPTARG" = "Y" ] || [ "$OPTARG" = "y" ]; then 
 			skipReadMePrompt=false
 		else
 			echo "Invalid argument for flag -r. 
@@ -24,7 +24,7 @@ while getopts "r:g:" arg; do
 		fi
 	  	;;
     g)
-		if [ "$OPTARG" -ge "64" -a "$OPTARG" -le "512" ]; then 
+		if [ "$OPTARG" -ge "64" ] && [ "$OPTARG" -le "512" ]; then 
 			skipCustomGpuSplitPrompt=true
 			customGpuSplit=$OPTARG
 		elif [ -z "$OPTARG" ]; then 
