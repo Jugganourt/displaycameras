@@ -19,13 +19,43 @@ if [ "`dpkg-query -s $package | grep Status | awk -v N=4 '{print $4}'`" != "inst
 fi
 done
 
+skipCustomGpuSplitPrompt=false
+
+while getopts "r:g:" arg; do
+  case $arg in
+    r)
+		if ["$OPTARG" = "N" || "$OPTARG" = "n"]; then 
+			skipReadMePrompt=true
+		elif ["$OPTARG" = "Y" || "$OPTARG" = "y"]; then 
+			skipReadMePrompt=false
+		else
+			echo "Invalid argument for flag -r. 
+				Options:
+				-r (y | n)	 Whether you want to see the readme at the end of the script y = yes, n = no"
+			exit 1
+		fi
+	  	;;
+    g)
+		if ["$OPTARG" -ge "64" && "$OPTARG" -le "512"]; then 
+			skipCustomGpuSplitPrompt=true
+			customGpuSplit=$OPTARG
+		elif [-z "$OPTARG" ]; then 
+			skipCustomGpuSplitPrompt=false
+		else
+			echo "Invalid argument for flag -g. 
+				Options:
+				-g 	 The custom GPU split must be sit between or be on 64 - 512; OR you can provide an empty string to use the systems recommendation"
+			exit 1
+		fi
+      ;;
+	\?) 
+	echo "Error: Invalid option"
+	exit 1
+	;;
+  esac
+done
+
 # Put the files in place and set ownership and permissions.
-
-skipCommand=false
-
-if [$1 == "skip"]; then
-    skipCommand=true
-fi
 
 if [ -r $DIR/displaycameras ]; then
 	echo "Copying the main script and setting permissions."
@@ -91,8 +121,11 @@ if [ "$1" != "upgrade" ]; then
 	# Ask whether there's a custom split desired
 	echo -n "Enter a custom gpu split if desired [gpu memory in MB] or [Enter] to use recommended split"
 
-	if ["$skipCommand" != true]; then
+	if ["$skipCustomGpuSplitPrompt" == "false"]; then
 		read
+
+	elif [! -z "$customGpuSplit"]; then
+		split="$customGpuSplit"
 	fi
 
 	if [ "$REPLY" != "" ]; then
@@ -140,13 +173,15 @@ systemctl enable displaycameras
 
 echo "Installation Successful!"
 
-if ["$skipCommand" != true]; then
-		read -p "See the README.md? [Y/y/N/n]"
+if ["$skipReadMePrompt" == "false"]; then
+	
+	read -p "See the README.md? [Y/y/N/n]"
+
+	if [ "$REPLY" = "Y" -o "$REPLY" = "y" ]; then
+		echo "Use the space bar (or PgDn) to page down, PgUp to page up, q to quit"
+		read -p "Press Enter to begin."
+		less $DIR/README.md
+	fi
 fi
 
-if [ "$REPLY" = "Y" -o "$REPLY" = "y" ]; then
-	echo "Use the space bar (or PgDn) to page down, PgUp to page up, q to quit"
-	read -p "Press Enter to begin."
-	less $DIR/README.md
-fi
 exit 0
