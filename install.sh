@@ -7,26 +7,14 @@
 # as a systemv init script (if copied to /etc/init.d/).  No other init systems
 # have been tested.
 
-# What is the path to the installer?
-DIR=`dirname "$(readlink -f "$0")"`
-
-# Ensure prerequisites are installed.
-
-for package in omxplayer fbi
-do
-if [ "`dpkg-query -s $package | grep Status | awk -v N=4 '{print $4}'`" != "installed" ]; then
-	apt-get install $package -y
-fi
-done
-
 skipCustomGpuSplitPrompt=false
 
 while getopts "r:g:" arg; do
   case $arg in
     r)
-		if ["$OPTARG" = "N" || "$OPTARG" = "n"]; then 
+		if ["$OPTARG" = "N" -o "$OPTARG" = "n"]; then 
 			skipReadMePrompt=true
-		elif ["$OPTARG" = "Y" || "$OPTARG" = "y"]; then 
+		elif ["$OPTARG" = "Y" -o "$OPTARG" = "y"]; then 
 			skipReadMePrompt=false
 		else
 			echo "Invalid argument for flag -r. 
@@ -36,11 +24,11 @@ while getopts "r:g:" arg; do
 		fi
 	  	;;
     g)
-		if ["$OPTARG" -ge "64" && "$OPTARG" -le "512"]; then 
+		if ["$OPTARG" -ge "64" -a "$OPTARG" -le "512"]; then 
 			skipCustomGpuSplitPrompt=true
 			customGpuSplit=$OPTARG
 		elif [-z "$OPTARG" ]; then 
-			skipCustomGpuSplitPrompt=false
+			skipCustomGpuSplitPrompt=true
 		else
 			echo "Invalid argument for flag -g. 
 				Options:
@@ -53,6 +41,18 @@ while getopts "r:g:" arg; do
 	exit 1
 	;;
   esac
+done
+
+# What is the path to the installer?
+DIR=`dirname "$(readlink -f "$0")"`
+
+# Ensure prerequisites are installed.
+
+for package in omxplayer fbi
+do
+if [ "`dpkg-query -s $package | grep Status | awk -v N=4 '{print $4}'`" != "installed" ]; then
+	apt-get install $package -y
+fi
 done
 
 # Put the files in place and set ownership and permissions.
