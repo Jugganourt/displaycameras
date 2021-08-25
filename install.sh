@@ -12,9 +12,9 @@ skipCustomGpuSplitPrompt=false
 while getopts "r:g:" arg; do
   case $arg in
     r)
-		if ["$OPTARG" = "N" -o "$OPTARG" = "n"]; then 
+		if [ "$OPTARG" = "N" -o "$OPTARG" = "n" ]; then 
 			skipReadMePrompt=true
-		elif ["$OPTARG" = "Y" -o "$OPTARG" = "y"]; then 
+		elif [ "$OPTARG" = "Y" -o "$OPTARG" = "y" ]; then 
 			skipReadMePrompt=false
 		else
 			echo "Invalid argument for flag -r. 
@@ -24,10 +24,10 @@ while getopts "r:g:" arg; do
 		fi
 	  	;;
     g)
-		if ["$OPTARG" -ge "64" -a "$OPTARG" -le "512"]; then 
+		if [ "$OPTARG" -ge "64" -a "$OPTARG" -le "512" ]; then 
 			skipCustomGpuSplitPrompt=true
 			customGpuSplit=$OPTARG
-		elif [-z "$OPTARG" ]; then 
+		elif [ -z "$OPTARG" ]; then 
 			skipCustomGpuSplitPrompt=true
 		else
 			echo "Invalid argument for flag -g. 
@@ -121,10 +121,10 @@ if [ "$1" != "upgrade" ]; then
 	# Ask whether there's a custom split desired
 	echo -n "Enter a custom gpu split if desired [gpu memory in MB] or [Enter] to use recommended split"
 
-	if ["$skipCustomGpuSplitPrompt" == "false"]; then
+	if [ "$skipCustomGpuSplitPrompt" == "false" ]; then
 		read
 
-	elif [! -z "$customGpuSplit"]; then
+	elif [ ! -z "$customGpuSplit" ]; then
 		split="$customGpuSplit"
 	fi
 
@@ -173,7 +173,7 @@ systemctl enable displaycameras
 
 echo "Installation Successful!"
 
-if ["$skipReadMePrompt" == "false"]; then
+if [ "$skipReadMePrompt" == "false" ]; then
 	
 	read -p "See the README.md? [Y/y/N/n]"
 
