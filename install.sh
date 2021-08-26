@@ -8,7 +8,6 @@
 # have been tested.
 
 skipCustomGpuSplitPrompt=false
-skipReadMePrompt=false
 
 while getopts "r:g:" arg; do
   case $arg in
