@@ -8,6 +8,7 @@
 # have been tested.
 
 skipCustomGpuSplitPrompt=false
+skipReadMePrompt=false
 
 while getopts "r:g:" arg; do
   case $arg in
@@ -19,7 +20,7 @@ while getopts "r:g:" arg; do
 		else
 			echo "Invalid argument for flag -r. 
 				Options:
-				-r (y | n)	 Whether you want to see the readme at the end of the script y = yes, n = no"
+				-r [Y/y/N/n] Whether you want to see the readme at the end of the script"
 			exit 1
 		fi
 	  	;;
@@ -173,15 +174,25 @@ systemctl enable displaycameras
 
 echo "Installation Successful!"
 
-if [ "$skipReadMePrompt" == "false" ]; then
-	
-	read -p "See the README.md? [Y/y/N/n]"
+if [ "$skipReadMePrompt" == "true" ]; then
+	exit 0
+fi
 
-	if [ "$REPLY" = "Y" -o "$REPLY" = "y" ]; then
-		echo "Use the space bar (or PgDn) to page down, PgUp to page up, q to quit"
-		read -p "Press Enter to begin."
-		less $DIR/README.md
-	fi
+launchReadMe () {
+	echo "Use the space bar (or PgDn) to page down, PgUp to page up, q to quit"
+	read -p "Press Enter to begin."
+	less $DIR/README.md
+}
+
+if [ "$skipReadMePrompt" == "false" ]; then
+	launchReadMe
+	exit 0
+fi
+
+read -p "See the README.md? [Y/y/N/n]"
+
+if [ "$REPLY" = "Y" -o "$REPLY" = "y" ]; then
+	launchReadMe
 fi
 
 exit 0
